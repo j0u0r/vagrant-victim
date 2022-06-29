@@ -1,3 +1,5 @@
+param ([String] $ip)
+
 # store profile path in ProfilePath variable
 $ProfilePath = "C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
 # get computer name from HKEY
@@ -59,7 +61,7 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
     else {
         # if computer name isnt 'dc-adapt.com'
         # runs join-domain.ps1 script from vagrant
-        . c:\vagrant\scripts\join-domain.ps1
+        . c:\vagrant\scripts\join-domain.ps1 $ip
     }
 # else; meaning that the vm has a domain
 } else {
