@@ -13,7 +13,7 @@
   > - Website: https://www.vagrantup.com/
   > - Downloads:
   >    - https://www.vagrantup.com/downloads (main; recommended download)
-  >    - https://www.vagrantup.com/docs/providers/vmware/vagrant-vmware-utility (vmware utility v1.0.21)
+  >    - https://www.vagrantup.com/vmware/downloads (vmware utility v1.0.21)
   > - Github: https://github.com/hashicorp/vagrant.git
 - Ruby v3.1.2 (to develop Vagrant; not so sure whether it's needed but i installed it anyway)
   >  - Website: https://www.ruby-lang.org/en/
