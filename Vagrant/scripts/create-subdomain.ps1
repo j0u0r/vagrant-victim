@@ -7,6 +7,7 @@ $subnet = $ip -replace "\.\d+$", ""
 # domain name
 $domain = "adapt.com"
 
+if ((gwmi win32_computersystem).partofdomain -eq $false) {
   Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Installing RSAT tools"
   # import server manager
   Import-Module ServerManager
@@ -14,6 +15,28 @@ $domain = "adapt.com"
   Add-WindowsFeature RSAT-AD-PowerShell, RSAT-AD-AdminCenter
 
   Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating subdomain controller..."
+  
+  # Disable password complexity policy-----------------------------------------------------------------------
+  # export security policy settings  into a file C:\secpol.cfg
+  secedit /export /cfg C:\secpol.cfg
+  # get contents of C:\secpol.cfg, replaces password complexity from 1 to 0, and save the file as C:\secpol.cfg
+  (gc C:\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0") | Out-File C:\secpol.cfg
+  # configure security policy (for the domain) to new configuration in C:\secpol.cfg 
+  secedit /configure /db C:\Windows\security\local.sdb /cfg C:\secpol.cfg /areas SECURITYPOLICY
+  # force remove C:\secpol.cfg
+  rm -force C:\secpol.cfg -confirm:$false
+  # ---------------------------------------------------------------------------------------------------------
+  
+  # Set administrator password-------------------------------------------------------------------------------
+  # get computer name
+  $computerName = $env:COMPUTERNAME
+  # password
+  $adminPassword = "vagrant"
+  # local administrator account
+  $adminUser = [ADSI] "WinNT://$computerName/Administrator,User"
+  # set password as vagrant
+  $adminUser.SetPassword($adminPassword)
+  # ---------------------------------------------------------------------------------------------------------
 
   # get computer name
   $computerName = $env:COMPUTERNAME
@@ -50,7 +73,7 @@ $domain = "adapt.com"
     -CreateDnsDelegation:$false `
     -DomainMode "7" `
     -ParentDomainName $domain`
-    -NewDomainName $subdomain `
+  -NewDomainName $subdomain `
     -InstallDns:$true `
     -NoRebootOnCompletion:$true `
     -Credential $DomainCred `
@@ -106,3 +129,4 @@ $domain = "adapt.com"
   }
   # restart dns service
   Restart-Service DNS
+}

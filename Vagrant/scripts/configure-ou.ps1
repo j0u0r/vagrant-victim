@@ -1,252 +1,84 @@
 # Hardcoding DC hostname in hosts file to sidestep any DNS issues
-Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    dc-adapt-com.adapt.com"
+function CreateOUs {
+    param (
+        $OUs, $dcname
+    )
 
-If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
-    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on adapt.com..."
-    # Create the individual OU if it doesn't exist
-    $individual_ou_created = 0
-    while ($individual_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating Individual OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=Individual,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Individual OU already exists. Moving On."
-            $individual_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "Individual" -Server "dc-adapt-com.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created Individual OU."
-            $individual_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the corporate OU if it doesn't exist
-    $corporate_ou_created = 0
-    while ($corporate_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating Corporate OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=Corporate,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Corporate OU already exists. Moving On."
-            $corporate_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "Corporate" -Server "dc-adapt-com.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created Corporate OU."
-            $corporate_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the sysadmin OU if it doesn't exist
-    $sysadmin_ou_created = 0
-    while ($sysadmin_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating SysAdmin OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=SysAdmin,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) SysAdmin OU already exists. Moving On."
-            $sysadmin_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "SysAdmin" -Server "dc-adapt-com.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created SysAdmin OU."
-            $sysadmin_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-}
-ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
-    # Create the IT OU if it doesn't exist
-    $IT_ou_created = 0
-    while ($IT_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating IT OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=IT,DC=private,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) IT OU already exists. Moving On."
-            $IT_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "IT" -Server "sdc-private.private.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created IT OU."
-            $IT_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the HR OU if it doesn't exist
-    $HR_ou_created = 0
-    while ($HR_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating HR OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=HR,DC=private,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) HR OU already exists. Moving On."
-            $HR_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "HR" -Server "sdc-private.private.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created HR OU."
-            $HR_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the Sales OU if it doesn't exist
-    $Sales_ou_created = 0
-    while ($Sales_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating Sales OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=Sales,DC=private,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Sales OU already exists. Moving On."
-            $Sales_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "Sales" -Server "sdc-private.private.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created Sales OU."
-            $Sales_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-        # Create the SysAdmin OU if it doesn't exist
-        $SysAdmin_ou_created = 0
-        while ($SysAdmin_ou_created -ne 1) {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating SysAdmin OU..."
+    foreach ($OU in $OUs) {
+        # OU -> (name, distinguished name)
+        $counter = 0
+        $OU_created = 0
+        $name = $OU[0]
+        while ($OU_created -ne 1) {
+            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating $name OU..."
             try {
-                Get-ADOrganizationalUnit -Identity 'OU=SysAdmin,DC=private,DC=adapt,DC=com' | Out-Null
-                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) SysAdmin OU already exists. Moving On."
-                $SysAdmin_ou_created = 1
+                Get-ADOrganizationalUnit -Identity $OU[1] | Out-Null
+                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) $name OU already exists. Moving On."
+                $OU_created = 1
             }
             catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-                New-ADOrganizationalUnit -Name "SysAdmin" -Server "sdc-private.private.adapt.com"
-                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created SysAdmin OU."
-                $SysAdmin_ou_created = 1
+                New-ADOrganizationalUnit -Name $OU[0] -Server $dcname
+                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created $name OU."
+                $OU_created = 1
             }
             catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-                Start-Sleep 5
+                if ($counter -ne 7) {
+                    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
+                    Start-Sleep 5
+                    $counter += 1
+                }
+                else {
+                    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Too many retries, time to stop."
+                    break
+                }
             }
             catch {
-                Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
+                if ($counter -ne 7) {
+                    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU, sleeping for 5 and retrying..."
+                    Start-Sleep 5
+                    $counter += 1
+                }
+                else {
+                    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU. Too many retries, time to stop."
+                    break
+                }
             }
         }
     }
 }
+
+If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
+    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    dc-adapt-com.adapt.com"
+    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on adapt.com..."
+    $OUs = @(
+        ("Individual", "OU=Individual,DC=adapt,DC=com"),
+        ("Corporate", "OU=Corporate,DC=adapt,DC=com"),
+        ("SysAdmin", "OU=SysAdmin,DC=adapt,DC=com"),
+        ("Workstations", "OU=Workstations,DC=adapt,DC=com")
+    )
+    CreateOUs $OUs 'dc-adapt-com'
+}
+ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
+    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    sdc-private.private.adapt.com"
+    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on private.adapt.com..."
+    $OUs = @(
+        ("IT", "OU=IT,DC=private,DC=adapt,DC=com"),
+        ("HR", "OU=HR,DC=private,DC=adapt,DC=com"),
+        ("Sales", "OU=Sales,DC=private,DC=adapt,DC=com"),
+        ("SysAdmin", "OU=SysAdmin,DC=private,DC=adapt,DC=com"),
+        ("Workstations", "OU=Workstations,DC=private,DC=adapt,DC=com")
+    )
+    CreateOUs $OUs 'sdc-private'
+}
 ElseIf ($env:COMPUTERNAME -imatch 'sdc-testing') {
-    # Create the Sales OU if it doesn't exist
-    $Sales_ou_created = 0
-    while ($Sales_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating Sales OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=Sales,DC=testing,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Sales OU already exists. Moving On."
-            $Sales_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "Sales" -Server "sdc-testing.testing.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created Sales OU."
-            $Sales_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the HR OU if it doesn't exist
-    $HR_ou_created = 0
-    while ($HR_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating HR OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=HR,DC=testing,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) HR OU already exists. Moving On."
-            $HR_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "HR" -Server "sdc-testing.testing.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created HR OU."
-            $HR_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the IT OU if it doesn't exist
-    $IT_ou_created = 0
-    while ($IT_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating IT OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=IT,DC=testing,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) IT OU already exists. Moving On."
-            $IT_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "IT" -Server "sdc-testing.testing.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created IT OU."
-            $IT_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
-    # Create the Admin OU if it doesn't exist
-    $Admin_ou_created = 0
-    while ($Admin_ou_created -ne 1) {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating Admin OU..."
-        try {
-            Get-ADOrganizationalUnit -Identity 'OU=Admin,DC=testing,DC=adapt,DC=com' | Out-Null
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Admin OU already exists. Moving On."
-            $Admin_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
-            New-ADOrganizationalUnit -Name "Admin" -Server "sdc-testing.testing.adapt.com"
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created Admin OU."
-            $Admin_ou_created = 1
-        }
-        catch [Microsoft.ActiveDirectory.Management.ADServerDownException] {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Unable to reach Active Directory. Sleeping for 5 and trying again..."
-            Start-Sleep 5
-        }
-        catch {
-            Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Something went wrong attempting to reach AD or create the OU."
-        }
-    }
+    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    sdc-testing.testing.adapt.com"
+    Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on testing.adapt.com..."
+    $OUs = @(
+        ("IT", "OU=IT,DC=testing,DC=adapt,DC=com"),
+        ("HR", "OU=HR,DC=testing,DC=adapt,DC=com"),
+        ("Sales", "OU=Sales,DC=testing,DC=adapt,DC=com"),
+        ("SysAdmin", "OU=SysAdmin,DC=testing,DC=adapt,DC=com"),
+        ("Workstations", "OU=Workstations,DC=testing,Dc=adapt,DC=com")
+    )
+    CreateOUs $OUs 'sdc-testing'
 }

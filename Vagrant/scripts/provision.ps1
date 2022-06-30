@@ -57,6 +57,8 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
     if ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
         # runs create-domain.ps1 script from vagrant
         . c:\vagrant\scripts\create-domain.ps1 192.168.56.124
+    }elseif ($env:COMPUTERNAME -like 'sdc*') {
+        . c:\vagrant\scripts\create-subdomain.ps1 $ip
     }
     else {
         # if computer name isnt 'dc-adapt.com'
