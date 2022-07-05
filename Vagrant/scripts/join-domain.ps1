@@ -7,7 +7,7 @@ $hostname = $(hostname)
 
 Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) First, set DNS to DC to join the domain..."
 if ($hostname -like "*private") {
-    $newDNSServers = "192.168.57.124"
+    $newDNSServers = "192.168.56.125"
     # path locating the user
     $user = "private.adapt.com\vagrant"
     # password for user
@@ -16,7 +16,7 @@ if ($hostname -like "*private") {
     $DomainCred = New-Object System.Management.Automation.PSCredential $user, $pass
 }
 elseif ($hostname -like "*testing") {
-    $newDNSServers = "192.168.58.124"
+    $newDNSServers = "192.168.56.126"
     # path locating the user
     $user = "testing.adapt.com\vagrant"
     # password for user
@@ -34,7 +34,7 @@ else {
     $DomainCred = New-Object System.Management.Automation.PSCredential $user, $pass
 }
 
-# get network adapters with the ip address containing "192.168.56."
+# get network adapters with the ip address containing ip address
 $adapters = Get-WmiObject Win32_NetworkAdapterConfiguration | Where-Object { $_.IPAddress -match $ip }
 # Don't do this in Azure. If the network adatper description contains "Hyper-V", this won't apply changes.
 # Specify the DC as a WINS server to help with connectivity as well

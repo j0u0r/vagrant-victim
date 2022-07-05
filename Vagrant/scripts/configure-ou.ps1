@@ -59,7 +59,7 @@ If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
     CreateOUs $OUs 'dc-adapt-com'
 }
 ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
-    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    sdc-private.private.adapt.com"
+    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.125    sdc-private.private.adapt.com"
     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on private.adapt.com..."
     $OUs = @(
         ("IT", "OU=IT,DC=private,DC=adapt,DC=com"),
@@ -71,7 +71,7 @@ ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
     CreateOUs $OUs 'sdc-private'
 }
 ElseIf ($env:COMPUTERNAME -imatch 'sdc-testing') {
-    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    sdc-testing.testing.adapt.com"
+    Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.126    sdc-testing.testing.adapt.com"
     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on testing.adapt.com..."
     $OUs = @(
         ("IT", "OU=IT,DC=testing,DC=adapt,DC=com"),

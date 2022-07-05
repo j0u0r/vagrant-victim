@@ -60,11 +60,20 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
   # convert plain password to secure password
   $SecurePassword = $PlainPassword | ConvertTo-SecureString -AsPlainText -Force
 
+  Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) First, set DNS to DC to contact domain..."
+  $newDNSServers = "192.168.56.124"
+  # get network adapters with the ip address containing ip
+  $adapters = Get-WmiObject Win32_NetworkAdapterConfiguration | Where-Object { $_.IPAddress -match $ip }
+  # Don't do this in Azure. If the network adatper description contains "Hyper-V", this won't apply changes.
+  # Specify the DC as a WINS server to help with connectivity as well
+  # if the network adapter's description does not contain "hyper-v", set new dns to dc's ip address
+  $adapters | ForEach-Object { if (!($_.Description).Contains("Hyper-V")) { $_.SetDNSServerSearchOrder($newDNSServers); $_.SetWINSServer($newDNSServers, "") } }
+
   # set up new subdomain----------------------------------------------------------------------------------------
   Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating subdomain..."
   # Windows Server 2016 R2
   # install active directory domain services
-  Install-WindowsFeature AD-domain-services
+  Add-WindowsFeature AD-domain-services
   # import active directory domain services deployment
   Import-Module ADDSDeployment
   # install active directory domain services forest
@@ -72,8 +81,8 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
     -SafeModeAdministratorPassword $SecurePassword `
     -CreateDnsDelegation:$false `
     -DomainMode "7" `
-    -ParentDomainName $domain`
-  -NewDomainName $subdomain `
+    -ParentDomainName $domain `
+    -NewDomainName $subdomain `
     -InstallDns:$true `
     -NoRebootOnCompletion:$true `
     -Credential $DomainCred `

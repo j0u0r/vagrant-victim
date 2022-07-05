@@ -14,15 +14,11 @@ Vagrant.configure("2") do |config|
   cfg.vm.network :private_network, ip: "192.168.56.124", gateway: "192.168.56.1", dns: "8.8.8.8"
   
   # scripts
+  # ! change sdc ip when settled >provision >configure-ou >join-domain
   cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: true, args: "-ip 192.168.56.124 -dns 8.8.8.8 -gateway 192.168.56.1" 
-  
-  # ! change sdc ip when settled
   cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false
   cfg.vm.provision "reload"
-
-  # ! change sdc ip when settled
   cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
-
   cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
 
   cfg.vm.provider "vmware_desktop" do |v, override|
@@ -69,11 +65,11 @@ Vagrant.configure("2") do |config|
       cfg.winrm.basic_auth_only = true
       cfg.winrm.timeout = 300
       cfg.winrm.retry_limit = 20
-      cfg.vm.network :private_network, ip: "192.168.57.124", gateway: "192.168.57.1", dns: "8.8.8.8"
+      cfg.vm.network :private_network, ip: "192.168.56.125", gateway: "192.168.56.1", dns: "192.168.56.124"
       
       # scripts
-      cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: true, args: "-ip 192.168.57.124 -dns 8.8.8.8 -gateway 192.168.57.1" 
-      cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false, args: "-ip 192.168.57.124"
+      cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: true, args: "-ip 192.168.56.125 -dns 8.8.8.8 -gateway 192.168.56.1" 
+      cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false, args: "-ip 192.168.56.125"
       cfg.vm.provision "reload"
       cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
       cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
@@ -122,11 +118,11 @@ Vagrant.configure("2") do |config|
       cfg.winrm.basic_auth_only = true
       cfg.winrm.timeout = 300
       cfg.winrm.retry_limit = 20
-      cfg.vm.network :private_network, ip: "192.168.58.124", gateway: "192.168.58.1", dns: "8.8.8.8"
+      cfg.vm.network :private_network, ip: "192.168.56.126", gateway: "192.168.56.1", dns: "192.168.56.124"
       
       # scripts
-      cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: true, args: "-ip 192.168.58.124 -dns 8.8.8.8 -gateway 192.168.58.1" 
-      cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false, args: "-ip 192.168.58.124"
+      cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: true, args: "-ip 192.168.56.126 -dns 8.8.8.8 -gateway 192.168.56.1" 
+      cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false, args: "-ip 192.168.56.126"
       cfg.vm.provision "reload"
       cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
       cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
