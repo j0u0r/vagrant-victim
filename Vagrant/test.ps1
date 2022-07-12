@@ -24,7 +24,7 @@ Install-ADDSDomain `
   -SafeModeAdministratorPassword $SecurePassword `
   -CreateDnsDelegation:$false `
   -DomainMode "7" `
-  -ParentDomainName adapt.com `
+  -ParentDomainName "adapt.com" `
   -NewDomainName private `
   -InstallDns:$true `
   -NoRebootOnCompletion:$true `

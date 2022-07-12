@@ -73,7 +73,7 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
   Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating subdomain..."
   # Windows Server 2016 R2
   # install active directory domain services
-  Add-WindowsFeature AD-domain-services
+  Install-WindowsFeature AD-domain-services
   # import active directory domain services deployment
   Import-Module ADDSDeployment
   # install active directory domain services forest
