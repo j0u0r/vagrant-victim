@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
   cfg.vm.provision "reload"
   cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
   cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
+  cfg.vm.provision "shell", inline: "Write-Host 'dc.adapt.com Provisioning Complete!'", privileged: false
 
   cfg.vm.provider "vmware_desktop" do |v, override|
     v.vmx["displayname"] = "dc.adapt.com"
@@ -73,7 +74,8 @@ Vagrant.configure("2") do |config|
       cfg.vm.provision "reload"
       cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
       cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
-    
+      cfg.vm.provision "shell", inline: "Write-Host 'sdc.private.adapt.com Provisioning Complete!'", privileged: false
+   
       cfg.vm.provider "vmware_desktop" do |v, override|
         v.vmx["displayname"] = "sdc.private.adapt.com"
         v.memory = 3072
@@ -126,6 +128,7 @@ Vagrant.configure("2") do |config|
       cfg.vm.provision "reload"
       cfg.vm.provision "shell", path: "scripts/configure-ou.ps1", privileged: false
       cfg.vm.provision "shell", path: "scripts/configure-users.ps1", privileged: false
+      cfg.vm.provision "shell", inline: "Write-Host 'sdc.testing.adapt.com Provisioning Complete!'", privileged: false
     
       cfg.vm.provider "vmware_desktop" do |v, override|
         v.vmx["displayname"] = "sdc.testing.adapt.com"

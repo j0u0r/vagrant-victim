@@ -12,11 +12,13 @@ function CreateOUs {
         while ($OU_created -ne 1) {
             Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating $name OU..."
             try {
+                Start-Sleep 5
                 Get-ADOrganizationalUnit -Identity $OU[1] | Out-Null
                 Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) $name OU already exists. Moving On."
                 $OU_created = 1
             }
             catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
+                Start-Sleep 5
                 New-ADOrganizationalUnit -Name $OU[0] -Server $dcname
                 Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created $name OU."
                 $OU_created = 1
@@ -46,6 +48,8 @@ function CreateOUs {
         }
     }
 }
+# give vm time to start
+Start-Sleep 120
 
 If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
     Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    dc-adapt-com.adapt.com"
@@ -82,3 +86,4 @@ ElseIf ($env:COMPUTERNAME -imatch 'sdc-testing') {
     )
     CreateOUs $OUs 'sdc-testing'
 }
+Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Completed OU configuration."

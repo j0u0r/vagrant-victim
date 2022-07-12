@@ -5,17 +5,21 @@ function Createusers {
     foreach ($user in $users) {
         # user -> (username,name,password,OU,dc name,admin?)
         $username = $user[0]
-        if (!(Get-ADUser -Filter "Name -like '$username'")) {
+        Start-Sleep 5
+        if (!(Get-ADUser -Filter "Name -like '*$username*'")) {
             Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating $username user"
+            Start-Sleep 5
             New-ADUser -Server $dcname -Name $user[0] -Description $user[1] -Accountpassword (ConvertTo-SecureString $user[2] -AsPlainText -Force) -Enabled $true -ChangePasswordAtLogon $false -Path $user[3]
             Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Created $username user"
             if ($user[4] -eq 1) {
-                $grpstr = Get-ADPrincipalGroupMembership $user[0] | Select-Object name | out-string
-                if ($grpstr -like "Domain Admins") {
+                Start-Sleep 5
+                $grpstr = Get-ADPrincipalGroupMembership "$username" | Select-Object name | out-string
+                if ($grpstr -like "*Domain Admins*") {
                     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) $username user already added to Domain Admins group"
                 }
                 else {
                     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Adding $username user to Domain Admins group"
+                    Start-Sleep 5
                     Add-ADGroupMember -Identity "Domain Admins" -Members $username
                     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Added $username user to Domain Admins group"
                 }
@@ -29,22 +33,26 @@ function Createusers {
 }
 
 if ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
+    Start-Sleep 5
     $vagrantgrps = Get-ADPrincipalGroupMembership vagrant | Select-Object name | out-string
-    if ($vagrantgrps -like "Domain Admins") {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) vagrant user already added to Domain Admins group"
+    if ($vagrantgrps -like "*Enterprise Admins*") {
+        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) vagrant user already added to Enterprise Admins group"
     }
     else {
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Adding vagrant user to Domain Admins group"
-        Add-ADGroupMember -Identity "Domain Admins" -Members vagrant
-        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Added vagrant user to Domain Admins group"
+        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Adding vagrant user to Enterprise Admins group"
+        Start-Sleep 5
+        Add-ADGroupMember -Identity "Enterprise Admins" -Members vagrant
+        Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Added vagrant user to Enterprise Admins group"
     }
     
+    Start-Sleep 5
     $vagrantou = get-aduser -identity vagrant | Select-Object distinguishedname | out-string
-    if ($vagrantou -like "OU=SysAdmin,DC=adapt,DC=com") {
+    if ($vagrantou -like "*OU=SysAdmin,DC=adapt,DC=com*") {
         Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) vagrant user already in SysAdmin OU"
     }
     else {
         Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Adding vagrant user to SysAdmin OU"
+        Start-Sleep 5
         Get-ADUser -Identity vagrant | Move-ADObject -TargetPath "OU=SysAdmin,DC=adapt,DC=com"
         Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Added vagrant user to SysAdmin OU"
     }
@@ -74,3 +82,4 @@ ElseIf ($env:COMPUTERNAME -imatch 'sdc-testing') {
     )
     Createusers $users "sdc-testing"
 }
+Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Completed user configuration."

@@ -41,7 +41,7 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
   # get computer name
   $computerName = $env:COMPUTERNAME
   # get subdomain name
-  if ($computerName -like "private") {
+  if ($computerName -like "*private*") {
     $subdomain = "private"
   }
   else {
@@ -56,7 +56,7 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
   $DomainCred = New-Object System.Management.Automation.PSCredential $user, $pass
 
   # plain password
-  $PlainPassword = "vagrant" # "P@ssw0rd"
+  $PlainPassword = "P@ssw0rd" #vagrant
   # convert plain password to secure password
   $SecurePassword = $PlainPassword | ConvertTo-SecureString -AsPlainText -Force
 
@@ -79,7 +79,7 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
   # install active directory domain services forest
   Install-ADDSDomain `
     -SafeModeAdministratorPassword $SecurePassword `
-    -CreateDnsDelegation:$false `
+    -CreateDnsDelegation:$true `
     -DomainMode "7" `
     -ParentDomainName $domain `
     -NewDomainName $subdomain `
@@ -125,17 +125,4 @@ if ((gwmi win32_computersystem).partofdomain -eq $false) {
     # disable dynamic dns registration and have null as a result
     $nic.SetDynamicDNSRegistration($false) | Out-Null
   }
-
-  # get resource records
-  $RRs = Get-DnsServerResourceRecord -ZoneName $domain -type 1 -Name "@"
-  # for each resource record
-  foreach ($RR in $RRs) {
-    # if the resource record has an ip of 10._._._
-    if ( (Select-Object  -InputObject $RR HostName, RecordType -ExpandProperty RecordData).IPv4Address -ilike "10.*") {
-      # remove said resource record
-      Remove-DnsServerResourceRecord -ZoneName $domain -RRType A -Name "@" -RecordData $RR.RecordData.IPv4Address -Confirm
-    }
-  }
-  # restart dns service
-  Restart-Service DNS
 }
