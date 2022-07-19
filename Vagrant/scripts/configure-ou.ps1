@@ -1,4 +1,3 @@
-# Hardcoding DC hostname in hosts file to sidestep any DNS issues
 function CreateOUs {
     param (
         $OUs, $dcname
@@ -52,6 +51,7 @@ function CreateOUs {
 Start-Sleep 120
 
 If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
+    # Hardcoding DC hostname in hosts file to sidestep any DNS issues
     Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.124    dc-adapt-com.adapt.com"
     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on adapt.com..."
     $OUs = @(
@@ -63,6 +63,7 @@ If ($env:COMPUTERNAME -imatch 'dc-adapt-com') {
     CreateOUs $OUs 'dc-adapt-com'
 }
 ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
+    # Hardcoding DC hostname in hosts file to sidestep any DNS issues
     Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.125    sdc-private.private.adapt.com"
     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on private.adapt.com..."
     $OUs = @(
@@ -75,6 +76,7 @@ ElseIf ($env:COMPUTERNAME -imatch 'sdc-private') {
     CreateOUs $OUs 'sdc-private'
 }
 ElseIf ($env:COMPUTERNAME -imatch 'sdc-testing') {
+    # Hardcoding DC hostname in hosts file to sidestep any DNS issues
     Add-Content "c:\windows\system32\drivers\etc\hosts" "        192.168.56.126    sdc-testing.testing.adapt.com"
     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Creating OUs on testing.adapt.com..."
     $OUs = @(

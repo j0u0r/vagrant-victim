@@ -23,7 +23,6 @@ function Createusers {
                     Add-ADGroupMember -Identity "Domain Admins" -Members $username
                     Write-Host "$('[{0:HH:mm}]' -f (Get-Date)) Added $username user to Domain Admins group"
                 }
-
             }
         }
         else {
