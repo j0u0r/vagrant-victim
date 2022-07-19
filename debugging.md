@@ -6,7 +6,7 @@
 ## **Error 2: "Install/reinstall VMware tools" is greyed out**
 - Go to VM, Settings, press Add...,  select CD/DVD Drive, press Finish, check the option again,it should not be greyed out anymore.
 
-## **Error 3: Vagrant runs into errors because VM is stil loading**
+## **Error 3: Vagrant runs into errors because VM is still loading**
 - Use command to reload and set up again:  
 vagrant reload \<vm name\> --provision
 
@@ -31,6 +31,13 @@ vagrant reload \<vm name\> --provision
 ## **Error 8: "The following WinRM command responded with a non-zero exit status. Vagrant assumes that this means the command failed!" while configuring OUs/users**
 - Check the error message. Usually i get "An unspecified error has occurred... RemoteException... NativeCommandError"
 - Not too sure what the problem is...
+
+## **Error 9: The provider "vmware_desktop" could not be found. Please use a provider that exists**
+- Run this command using Powershell terminal:  
+vagrant plugin install vagrant-vmware-desktop
+
+## **Error 10: (USING VM AS HOST MACHINE) VMware opens then immediately closes, Vagrant runs into unknown error**
+- Shut down the VM that you are hosting Vagrant on, on the top press VM, Settings..., Processors, tick 'Virtualize Intel VT-x/EPT or AMD-V/RVI
 
 ## If all else fails:
 - If you think it is ***Vagrant-side*** problem, use command to reload and set up again:  
