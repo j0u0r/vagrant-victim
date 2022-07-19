@@ -37,7 +37,8 @@ vagrant reload \<vm name\> --provision
 vagrant plugin install vagrant-vmware-desktop
 
 ## **Error 10: (USING VM AS HOST MACHINE) VMware opens then immediately closes, Vagrant runs into unknown error**
-- Shut down the VM that you are hosting Vagrant on, on the top press VM, Settings..., Processors, tick 'Virtualize Intel VT-x/EPT or AMD-V/RVI
+- Shut down the VM that you are hosting Vagrant on
+- On the top of the window press VM, Settings..., Processors, tick 'Virtualize Intel VT-x/EPT or AMD-V/RVI
 
 ## If all else fails:
 - If you think it is ***Vagrant-side*** problem, use command to reload and set up again:  
