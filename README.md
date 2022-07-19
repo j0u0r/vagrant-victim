@@ -13,6 +13,7 @@
 ## Resources used
 - Vagrant v2.2.19
   > - Website: https://www.vagrantup.com/
+  > - Installation Guide for VMware: https://www.vagrantup.com/docs/providers/vmware/installation
   > - Downloads:
   >    - https://www.vagrantup.com/downloads (main; recommended download)
   >    - https://www.vagrantup.com/vmware/downloads (vmware utility v1.0.21)
